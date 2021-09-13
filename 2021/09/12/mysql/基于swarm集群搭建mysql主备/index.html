@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>基于swarm集群搭建mysql主备 | akachi's blog</title><meta name="keywords" content="mysql,swarm,dokcer,容器化,高可用,HA,数据库"><meta name="author" content="akachi"><meta name="copyright" content="akachi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="mysql swarm docker 搭建nfs存储配置文件  配置nfs拥有root权限   1&#x2F;nfs&#x2F;docker&#x2F;volumes 192.168.2.0&#x2F;24(rw,no_root_squash)  mysql-compose.yml 配置1234567891011121314151617181920212223242526272829303132333435363738394041424">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于swarm集群搭建mysql主备">
+<meta property="og:url" content="https://artificial-deus.github.io/2021/09/12/mysql/%E5%9F%BA%E4%BA%8Eswarm%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E5%A4%87/index.html">
+<meta property="og:site_name" content="akachi&#39;s blog">
+<meta property="og:description" content="mysql swarm docker 搭建nfs存储配置文件  配置nfs拥有root权限   1&#x2F;nfs&#x2F;docker&#x2F;volumes 192.168.2.0&#x2F;24(rw,no_root_squash)  mysql-compose.yml 配置1234567891011121314151617181920212223242526272829303132333435363738394041424">
+<meta property="og:locale">
+<meta property="og:image" content="https://artificial-deus.github.io/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)">
+<meta property="article:published_time" content="2021-09-12T15:00:42.000Z">
+<meta property="article:modified_time" content="2021-09-13T18:47:06.025Z">
+<meta property="article:author" content="akachi">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="swarm">
+<meta property="article:tag" content="dokcer">
+<meta property="article:tag" content="容器化">
+<meta property="article:tag" content="高可用">
+<meta property="article:tag" content="HA">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://artificial-deus.github.io/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)"><link rel="shortcut icon" href="https://raw.githubusercontent.com/akachi10/notes/master/god_dice.jfif"><link rel="canonical" href="https://artificial-deus.github.io/2021/09/12/mysql/%E5%9F%BA%E4%BA%8Eswarm%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E5%A4%87/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BGTJN89SV4"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-BGTJN89SV4');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于swarm集群搭建mysql主备',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-14 02:47:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/38939292?s=60&amp;v=4" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">akachi's blog</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于swarm集群搭建mysql主备</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-09-12T15:00:42.000Z" title="Created 2021-09-12 23:00:42">2021-09-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-09-13T18:47:06.025Z" title="Updated 2021-09-14 02:47:06">2021-09-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于swarm集群搭建mysql主备"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="mysql-swarm-docker"><a href="#mysql-swarm-docker" class="headerlink" title="mysql swarm docker"></a>mysql swarm docker</h1><ul>
+<li><p>搭建nfs存储配置文件</p>
+</li>
+<li><p>配置nfs拥有root权限</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/nfs/docker/volumes 192.168.2.0/24(rw,no_root_squash)</span><br></pre></td></tr></table></figure>
+
+<h2 id="mysql-compose-yml-配置"><a href="#mysql-compose-yml-配置" class="headerlink" title="mysql-compose.yml 配置"></a>mysql-compose.yml 配置</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mysql-1:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5.7</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=CST-8</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=123456</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">33061</span><span class="string">:3306</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql-data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/nfs/docker/volumes/rainbowfish_mysql/conf/my1.cnf:/etc/mysql/my.cnf</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--character-set-server=utf8</span> <span class="string">--collation-server=utf8_general_ci</span> <span class="string">--sql-mode=&quot;STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO&quot;</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">placement:</span></span><br><span class="line">        <span class="attr">constraints:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">node.hostname</span> <span class="string">==</span> <span class="string">Docker-swarm-worker04</span></span><br><span class="line">  <span class="attr">mysql-2:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql:5.7</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TZ=CST-8</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=123456</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">33062</span><span class="string">:3306</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql-data:/var/lib/mysql</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/nfs/docker/volumes/rainbowfish_mysql/conf/my2.cnf:/etc/mysql/my.cnf</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--character-set-server=utf8</span> <span class="string">--collation-server=utf8_general_ci</span> <span class="string">--sql-mode=&quot;STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO&quot;</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">placement:</span></span><br><span class="line">        <span class="attr">constraints:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">node.hostname</span> <span class="string">==</span> <span class="string">Docker-swarm-worker05</span></span><br><span class="line">  <span class="attr">mysql_nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.19.2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">33060</span><span class="string">:3306</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/nfs/docker/volumes/rainbowfish_mysql/nginx/nginx.conf:/etc/nginx/nginx.conf</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/nfs/docker/volumes/rainbowfish_mysql/nginx/data:/var/www/html/upload</span></span><br><span class="line"><span class="comment">#      - nginx-data:/var/www/html/upload</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">replicated</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">      <span class="attr">placement:</span></span><br><span class="line">        <span class="attr">constraints:</span> [<span class="string">node.role</span> <span class="string">==</span> <span class="string">manager</span>]</span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mysql-1</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">mysql-data:</span></span><br><span class="line">    <span class="attr">external:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">nginx-data:</span></span><br><span class="line">    <span class="attr">external:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><ul>
+<li>my1.cnf</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server_id=1</span><br><span class="line">log-bin= mysql-bin</span><br><span class="line"> </span><br><span class="line">replicate-ignore-db=mysql</span><br><span class="line">replicate-ignore-db=sys</span><br><span class="line">replicate-ignore-db=information_schema</span><br><span class="line">replicate-ignore-db=performance_schema</span><br><span class="line"> </span><br><span class="line">read-only=0</span><br><span class="line">relay_log=mysql-relay-bin</span><br><span class="line">log-slave-updates=on</span><br><span class="line">auto-increment-offset=1</span><br><span class="line">auto-increment-increment=2</span><br><span class="line"> </span><br><span class="line">!includedir /etc/mysql/conf.d/</span><br><span class="line">!includedir /etc/mysql/mysql.conf.d/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>my2.cnf</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server_id=2</span><br><span class="line">log-bin= mysql-bin</span><br><span class="line"> </span><br><span class="line">replicate-ignore-db=mysql</span><br><span class="line">replicate-ignore-db=sys</span><br><span class="line">replicate-ignore-db=information_schema</span><br><span class="line">replicate-ignore-db=performance_schema</span><br><span class="line"> </span><br><span class="line">read-only=0</span><br><span class="line">relay_log=mysql-relay-bin</span><br><span class="line">log-slave-updates=on</span><br><span class="line">auto-increment-offset=2</span><br><span class="line">auto-increment-increment=2</span><br><span class="line"> </span><br><span class="line">!includedir /etc/mysql/conf.d/</span><br><span class="line">!includedir /etc/mysql/mysql.conf.d/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>negix</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">user www-data;</span><br><span class="line">worker_processes auto;</span><br><span class="line">pid /run/nginx.pid;</span><br><span class="line"> </span><br><span class="line">events &#123;</span><br><span class="line">    use   epoll;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">stream &#123;</span><br><span class="line">    upstream mysql &#123;</span><br><span class="line">        #backup为备用mysql,当mysql-1故障后自动切换mysql-2,达到主备效果，</span><br><span class="line">        server mysql-1:3306 max_fails=3 fail_timeout=30s;</span><br><span class="line">        server mysql-2:3306      backup;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        listen    3306;</span><br><span class="line">        proxy_connect_timeout 3000s;</span><br><span class="line">        proxy_timeout 6000s;</span><br><span class="line">        proxy_pass mysql;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stack deploy -c mysql-compose.yml rainbowfish_mysql</span><br></pre></td></tr></table></figure>
+
+<h2 id="双活"><a href="#双活" class="headerlink" title="双活"></a>双活</h2><h3 id="原理图"><a href="#原理图" class="headerlink" title="原理图"></a>原理图</h3><p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9ub3RlLnlvdWRhby5jb20veXdzL3B1YmxpYy9yZXNvdXJjZS9iZTFmYTQ4OTBkYzkyZTZlZDY1OWRiYmIzMTZmMzExMS94bWxub3RlLzlBODBFRDczRkQzRjRERDZBNUE1OTg2MjA2MkQ5QkQ5LzE0MDg" alt="这里写图片描述"></p>
+<ul>
+<li>创建用户</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GRANT REPLICATION SLAVE ON *.* to &#x27;slave&#x27;@&#x27;%&#x27; identified by &#x27;123456&#x27;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>停止同步服务(如果有)</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stop slave</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注:等待一分钟后再操作</p>
+</blockquote>
+<ul>
+<li>同步数据库</li>
+</ul>
+<blockquote>
+<p>注:如果两个数据库不是完全同步的会失败。</p>
+<p>如果不是完全一直需要先同步数据</p>
+</blockquote>
+<ul>
+<li>分别查看两台服务器的binlog文件状态</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> master status;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/2020121620464518.png" alt="img"></p>
+<ul>
+<li><strong>mysql-2</strong>执行以下命令，开启IO线程监听<strong>mysql-1</strong>的binlog文件<strong>，</strong>黄色信息为<strong>mysql-1</strong>记录的信息</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#在mysql<span class="number">-1</span>执行</span><br><span class="line">change master <span class="keyword">to</span> </span><br><span class="line">master_host<span class="operator">=</span><span class="string">&#x27;mysql-2&#x27;</span>,</span><br><span class="line">master_user<span class="operator">=</span><span class="string">&#x27;slave&#x27;</span>,</span><br><span class="line">master_password<span class="operator">=</span><span class="string">&#x27;123456&#x27;</span>,</span><br><span class="line">master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000011&#x27;</span>,</span><br><span class="line">master_log_pos<span class="operator">=</span><span class="number">1</span>,</span><br><span class="line">master_port<span class="operator">=</span><span class="number">3306</span>;</span><br><span class="line">#在mysql<span class="number">-2</span>上执行</span><br><span class="line">change master <span class="keyword">to</span> master_host<span class="operator">=</span><span class="string">&#x27;mysql-1&#x27;</span>,</span><br><span class="line">master_user<span class="operator">=</span><span class="string">&#x27;slave&#x27;</span>,</span><br><span class="line">master_password<span class="operator">=</span><span class="string">&#x27;123456&#x27;</span>,</span><br><span class="line">master_log_file<span class="operator">=</span><span class="string">&#x27;mysql-bin.000012&#x27;</span>,</span><br><span class="line">master_log_pos<span class="operator">=</span><span class="number">1815</span>,</span><br><span class="line">master_port<span class="operator">=</span><span class="number">3306</span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>解释：</p>
+<p>master_host：因为在同个docker swarm集群所以可以指定容器名</p>
+<p>master_password: 访问mysql-1或者mysql-2的密码</p>
+<p>master_log_file:查询到的文件名</p>
+<p>master_log_pos:查询到的当前条目(注意要停止所有的写入)</p>
+</blockquote>
+<ul>
+<li>启动同步</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> slave;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看同步状态</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> slave status</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注:看到<img src="https://raw.githubusercontent.com/akachi10/notes/master/pic/2021/08/12/110245.png" alt="image-20210812110234991"></p>
+<p>这两项为Yes为同步成功</p>
+<p>如果看到connection是指系SQL或IO读取着正在连接</p>
+<p>如果长时间没有连接成功或者出现NO大概率是出现问题了可以查看last error</p>
+<p>通常都是一些简单的问题比如无法登陆、对方hostname 无法访问之类的。</p>
+</blockquote>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li>部署情况</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/akachi10/notes/master/pic/2021/08/12/112427.png" alt="image-20210812112426446"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>mysql swarm 高可用性资料</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42533856/article/details/111301631">https://blog.csdn.net/weixin_42533856/article/details/111301631</a></li>
+<li>nfs 权限资料</li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/panwenbin-logs/articles/7106386.html">https://www.cnblogs.com/panwenbin-logs/articles/7106386.html</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">akachi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://artificial-deus.github.io/2021/09/12/mysql/%E5%9F%BA%E4%BA%8Eswarm%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E5%A4%87/">https://artificial-deus.github.io/2021/09/12/mysql/%E5%9F%BA%E4%BA%8Eswarm%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E5%A4%87/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/mysql/">mysql</a><a class="post-meta__tags" href="/tags/swarm/">swarm</a><a class="post-meta__tags" href="/tags/dokcer/">dokcer</a><a class="post-meta__tags" href="/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/">容器化</a><a class="post-meta__tags" href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/">高可用</a><a class="post-meta__tags" href="/tags/HA/">HA</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></div><div class="post_share"><div class="social-share" data-image="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2021/09/13/%E5%8D%9A%E5%AE%A2/Hexo%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAgithub%E4%B8%8A%E7%9A%84%E5%8D%9A%E5%AE%A2/"><img class="prev-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Hexo搭建一个github上的博客</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql-swarm-docker"><span class="toc-number">1.</span> <span class="toc-text">mysql swarm docker</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-compose-yml-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text">mysql-compose.yml 配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-number">1.3.</span> <span class="toc-text">启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E6%B4%BB"><span class="toc-number">1.4.</span> <span class="toc-text">双活</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E5%9B%BE"><span class="toc-number">1.4.1.</span> <span class="toc-text">原理图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.5.</span> <span class="toc-text">其他</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.6.</span> <span class="toc-text">参考资料</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347)"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By akachi</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
