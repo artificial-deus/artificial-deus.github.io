@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://artificial-deus.github.io/2021/08/03/docker/swarm%E9%9B%86%E7%BE%A4/</loc>
+    
+    <lastmod>2021-09-29</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://artificial-deus.github.io/2021/08/01/docker/docker/</loc>
+    
+    <lastmod>2021-09-29</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://artificial-deus.github.io/2021/09/28/ceph/%E6%90%AD%E5%BB%BACEPH/</loc>
     
     <lastmod>2021-09-28</lastmod>
@@ -185,6 +199,20 @@
     <priority>0.6</priority>
   </url>
   
+  <url>
+    <loc>https://artificial-deus.github.io/tags/docker/</loc>
+    <lastmod>2021-09-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://artificial-deus.github.io/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92/</loc>
+    <lastmod>2021-09-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
 
   
   <url>
@@ -217,6 +245,13 @@
   
   <url>
     <loc>https://artificial-deus.github.io/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2021-09-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://artificial-deus.github.io/categories/%E5%AE%B9%E5%99%A8%E5%8C%96/</loc>
     <lastmod>2021-09-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
