@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Spring Cloud Feign | Akachi's blog</title><meta name="keywords" content="Spring,Spring Cloud,Feign"><meta name="author" content="Akachi"><meta name="copyright" content="Akachi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Spring Cloud Feign介绍:  Feign 能通过注解来实现远程调用。能够帮助我们节省很多远程调用的代码   Feign 使用了Ribbon 只需要在服务调用者中使用就行了   OpenFeign是spring基于Feign开发的spring融合版  核心思想:无感知远程HTTP调用请求 写个案例 步骤  服务消费者添加Feign依赖； 创建业务层接口，添加@FeignClient注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud Feign">
+<meta property="og:url" content="https://artificial-deus.github.io/2017/02/28/Spring/Spring%20Cloud%20Feign-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Akachi&#39;s blog">
+<meta property="og:description" content="Spring Cloud Feign介绍:  Feign 能通过注解来实现远程调用。能够帮助我们节省很多远程调用的代码   Feign 使用了Ribbon 只需要在服务调用者中使用就行了   OpenFeign是spring基于Feign开发的spring融合版  核心思想:无感知远程HTTP调用请求 写个案例 步骤  服务消费者添加Feign依赖； 创建业务层接口，添加@FeignClient注">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg">
+<meta property="article:published_time" content="2017-02-28T15:00:42.000Z">
+<meta property="article:modified_time" content="2021-11-26T07:11:08.836Z">
+<meta property="article:author" content="Akachi">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="Feign">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg"><link rel="shortcut icon" href="https://raw.githubusercontent.com/akachi10/notes/master/god_dice.jfif"><link rel="canonical" href="https://artificial-deus.github.io/2017/02/28/Spring/Spring%20Cloud%20Feign-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.5/dist/instantsearch.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a04e00a053a6685b9b86ca842f0f2e2f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BGTJN89SV4"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-BGTJN89SV4');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: {"appId":"FCSTQQ895M","apiKey":"72acbaa4c88844d34550b999e19531f0","indexName":"blog-search","hits":{"per_page":6},"languages":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}.","hits_stats":"${hits} results found in ${time} ms"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Cloud Feign',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-11-26 15:11:08'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/38939292?s=60&amp;v=4" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">31</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">12</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Akachi's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Cloud Feign</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2017-02-28T15:00:42.000Z" title="Created 2017-02-28 23:00:42">2017-02-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-11-26T07:11:08.836Z" title="Updated 2021-11-26 15:11:08">2021-11-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Feign/">Feign</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Cloud Feign"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Spring-Cloud-Feign"><a href="#Spring-Cloud-Feign" class="headerlink" title="Spring Cloud Feign"></a>Spring Cloud Feign</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍:"></a>介绍:</h2><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/11/10/151143.png" alt="image-20211110151129609"></p>
+<blockquote>
+<p>Feign 能通过注解来实现远程调用。能够帮助我们节省很多远程调用的代码</p>
+</blockquote>
+<blockquote>
+<p>Feign 使用了Ribbon</p>
+<p>只需要在服务调用者中使用就行了</p>
+</blockquote>
+<blockquote>
+<p>OpenFeign是spring基于Feign开发的spring融合版</p>
+</blockquote>
+<h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想:"></a>核心思想:</h3><p><strong>无感知远程HTTP调用请求</strong></p>
+<h2 id="写个案例"><a href="#写个案例" class="headerlink" title="写个案例"></a>写个案例</h2><blockquote>
+<p>步骤</p>
+<ul>
+<li>服务消费者添加Feign依赖；</li>
+<li>创建业务层接口，添加<code>@FeignClient</code>注解声明需要调用的服务；</li>
+<li>业务抽象方法使用 SpringMVC注解配置服务地址及参数；</li>
+<li>启动类加载 <code>@EnableFeignClients</code> 注解激活Feign 组件。</li>
+</ul>
+</blockquote>
+<h3 id="加载依赖包"><a href="#加载依赖包" class="headerlink" title="加载依赖包"></a>加载依赖包</h3><h4 id="加载依赖"><a href="#加载依赖" class="headerlink" title="加载依赖"></a>加载依赖</h4><ul>
+<li>spring-cloud-starter-netflix-eureka-client</li>
+<li>spring-cloud-starter-openfeign</li>
+<li>spring-boot-starter-web</li>
+<li>org.projectlombok lombok</li>
+<li>spring-boot-starter-test</li>
+</ul>
+<h4 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h4><ul>
+<li>ShopApplication 中添加@EnbaleFeignClients注解 开启Feign</li>
+<li>创建ProductService接口并添加@FeignClient注解</li>
+<li>编写<code>List&lt;Product&gt; getProducts()</code>方法并使用SpringMVC注解<code>@GetMapping(&quot;/product/list&quot;)</code>远程调用 </li>
+<li>在controller中调用看看</li>
+<li>application.yml中按照常規eureka配置即可</li>
+</ul>
+<h4 id="调用接口"><a href="#调用接口" class="headerlink" title="调用接口"></a>调用接口</h4><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET http://localhost:18480/shop/byid?id=331</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/11/11/153339.png" alt="image-20211111153326740"></p>
+<h2 id="Feign负载均衡"><a href="#Feign负载均衡" class="headerlink" title="Feign负载均衡"></a>Feign负载均衡</h2><p>Feign基于Ribbon做了负载均衡算法</p>
+<h3 id="全局负载均衡配置"><a href="#全局负载均衡配置" class="headerlink" title="全局负载均衡配置"></a>全局负载均衡配置</h3><blockquote>
+<p>课程中的Loadbalancer可能过时了用了没用看官方的内容</p>
+<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign-circuitbreaker-fallback">https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign-circuitbreaker-fallback</a></p>
+<table>
+<thead>
+<tr>
+<th><code>spring-cloud-starter-openfeign</code>支持<code>spring-cloud-starter-loadbalancer</code>. 但是，作为一个可选的依赖项，如果您想使用它，您需要确保将其添加到您的项目中</th>
+</tr>
+</thead>
+</table>
+<p>看看这 <a target="_blank" rel="noopener" href="https://spring.io/guides/gs/spring-cloud-loadbalancer/">https://spring.io/guides/gs/spring-cloud-loadbalancer/</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> RandomRule <span class="title">randomRule</span><span class="params">()</span></span>&#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">new</span> RandomRule();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="局部配置"><a href="#局部配置" class="headerlink" title="局部配置"></a>局部配置</h3><blockquote>
+<p>与之前是一样的 但仍3.0.4仍然不成功</p>
+</blockquote>
+<p>在yml中配置</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">service-provider:</span> <span class="comment"># 服务名</span></span><br><span class="line">  <span class="attr">ribbon:</span></span><br><span class="line">    <span class="attr">NFLoadBalancerRuleClassName:</span> <span class="string">com.netflix.loadbalancer.RandomRule</span> <span class="comment">#随机调用</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="带有参数的请求"><a href="#带有参数的请求" class="headerlink" title="带有参数的请求"></a>带有参数的请求</h2><blockquote>
+<p>请求</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping()</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> HttpEntity&lt;Product&gt; <span class="title">getProductByCode</span><span class="params">(String id)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> HttpEntity&lt;&gt;(productRepository.getById(id));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里会报错:</p>
+<p> No serializer found for class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor and no proper</p>
+<p>某些属性是空的找不到无法正常序列化。</p>
+<p>在Model上加入以上注解解决这个问题</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonIgnoreProperties(value = &#123; &quot;hibernateLazyInitializer&quot;&#125;)</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<ul>
+<li><p>消费者关键代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/product/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function">Product <span class="title">getProductById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> String id)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li><p>提供者关键代码</p>
+<blockquote>
+<p>正常接口</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> HttpEntity <span class="title">getProductByCode</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> String id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Product product = productRepository.getById(id);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HttpEntity&lt;&gt;(product);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        <span class="keyword">return</span> HttpEntity.EMPTY;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>可以用 @PathVariable 标签设定参数</p>
+</blockquote>
+<h3 id="post传参"><a href="#post传参" class="headerlink" title="post传参"></a>post传参</h3><blockquote>
+<p>post的参数在请求体中</p>
+</blockquote>
+<ul>
+<li><p>提供者关键代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="meta">@PostMapping()</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> HttpEntity&lt;Product&gt; <span class="title">saveProduct</span><span class="params">(<span class="meta">@RequestBody</span> Product product)</span></span>&#123;</span><br><span class="line">    product.setName(product.getName()+<span class="string">&quot;_&quot;</span>+serverPort);</span><br><span class="line">    product=productRepository.save(product);</span><br><span class="line">    HttpEntity&lt;Product&gt; httpEntity = <span class="keyword">new</span> HttpEntity(product);</span><br><span class="line">    <span class="keyword">return</span> httpEntity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>消費者关键代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="meta">@PostMapping(&quot;/product&quot;)</span></span><br><span class="line"><span class="function">Product <span class="title">saveProduct</span><span class="params">(<span class="meta">@RequestBody</span> Product product)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>必须用@RequestBody 来读取请求体中的内容</p>
+</blockquote>
+<h2 id="Gzip-压缩"><a href="#Gzip-压缩" class="headerlink" title="Gzip 压缩"></a>Gzip 压缩</h2><blockquote>
+<p>降低网络传输量</p>
+<p>谷歌可以直接读取gzip</p>
+</blockquote>
+<h3 id="配置Gzip"><a href="#配置Gzip" class="headerlink" title="配置Gzip"></a>配置Gzip</h3><blockquote>
+<p>全局和局部的配置的区别。</p>
+<p>局部是关于请求到service的，全局会从相关服务一直到浏览器都进项gzip压缩</p>
+</blockquote>
+<blockquote>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/11/15/164911.png" alt="image-20211115164857841"></p>
+<p>默认情况是没有启用gzip的</p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/11/15/165015.png" alt="image-20211115165013830"></p>
+<p>谷歌浏览器告诉我们他是支持gzip的</p>
+</blockquote>
+<h4 id="局部配置-1"><a href="#局部配置-1" class="headerlink" title="局部配置"></a>局部配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Feign gzip 压缩</span></span><br><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">compression:</span></span><br><span class="line">    <span class="attr">request:</span></span><br><span class="line">      <span class="attr">mime-types:</span> <span class="string">text/xml,application/xml,application/json</span> <span class="comment"># 配置压缩支持的MIME TYPE</span></span><br><span class="line">      <span class="attr">min-request-size:</span> <span class="number">512</span> <span class="comment"># 配置压缩数据的最小阈值，默认2048</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">response:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment"># 返回也开启</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="string">$&#123;SERVICE_PORT:18480&#125;</span></span><br><span class="line">  <span class="attr">compression:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">mime-types:</span> <span class="string">application/json,application/xml,text/html,text/xml,text/plain</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/11/15/165339.png" alt="image-20211115165338249"></p>
+<p>返回也支持了</p>
+</blockquote>
+<h2 id="http性能提升"><a href="#http性能提升" class="headerlink" title="http性能提升"></a>http性能提升</h2><blockquote>
+<p>在feign中通过连接池来降低负载提升性能</p>
+<p>每次请求建立都需要三次握手，四次挥手为了降低性能开销我们使用连接池方式。</p>
+<p>Feign的HTTP客户端支持三种框架，HttpURLConnection、HttpClient、OkHttp；默认使用HttpURLConnection(JDK自带的不支持连接池)</p>
+<p>推荐使用HttpClient</p>
+</blockquote>
+<h3 id="启用httpClient"><a href="#启用httpClient" class="headerlink" title="启用httpClient"></a>启用httpClient</h3><ul>
+<li><p>导入依赖</p>
+<ul>
+<li><p>org.apache.httpcomponents httpclient 4.5.11</p>
+<p>必须要用httpclient才能正常调用，因为原生不支持</p>
+</li>
+<li><p>io.github.openfeign feign-httpclient 10.7.4</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.httpcomponents<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.5.11<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.openfeign<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>10.7.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>修改配置文件</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">httpclient:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment">#开启httpClient</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/11/15/171414.png" alt="image-20211115171411381"></p>
+</blockquote>
+</li>
+</ul>
+<h4 id="Get-RequestBody传递对象参数"><a href="#Get-RequestBody传递对象参数" class="headerlink" title="Get RequestBody传递对象参数"></a>Get RequestBody传递对象参数</h4><ul>
+<li><p>服務提供方配置</p>
+<ul>
+<li><p>pom</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">    </span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign <span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;openfeign.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.httpcomponents<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.5.11<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.openfeign<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>10.7.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">httpclient:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment"># 默認是開啓的</span></span><br></pre></td></tr></table></figure></li>
+<li><p>关键代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/findByProduct&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Product <span class="title">findShop</span><span class="params">(<span class="meta">@RequestBody</span> Product product)</span></span>&#123;</span><br><span class="line">    Optional&lt;Product&gt; productOptional = productRepository.findById(product.getCode());</span><br><span class="line">    <span class="keyword">if</span>(productOptional.isPresent())&#123;</span><br><span class="line">        <span class="keyword">return</span> productOptional.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>消费者</p>
+<ul>
+<li><p>pom yml和服务方想用</p>
+</li>
+<li><p>关键代码 java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/product/findByProduct&quot;)</span></span><br><span class="line"><span class="function">Product <span class="title">findByProduct</span><span class="params">(<span class="meta">@RequestBody</span> Product product)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="性能调优状态查看"><a href="#性能调优状态查看" class="headerlink" title="性能调优状态查看"></a>性能调优状态查看</h3><p>在服务消费者中添加一个logback.xml文件</p>
+<h3 id="新能调优，超时设置"><a href="#新能调优，超时设置" class="headerlink" title="新能调优，超时设置"></a>新能调优，超时设置</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">connectTimeout:</span> <span class="number">3000</span></span><br><span class="line">        <span class="attr">readTimeout:</span> <span class="number">3000</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>新版本的Feign: 已经没有再用ribbon了</p>
+</blockquote>
+<h2 id="Feign的雪崩处理"><a href="#Feign的雪崩处理" class="headerlink" title="Feign的雪崩处理"></a>Feign的雪崩处理</h2><ul>
+<li>首先搭建一个与Shop相同的环境</li>
+<li>有ProductService并且使用@FeignService注解调用</li>
+<li>添加一个ProductConntroller来调用Product并测试成功</li>
+</ul>
+<h3 id="依赖引用"><a href="#依赖引用" class="headerlink" title="依赖引用"></a>依赖引用</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;netflix-eureka-server.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign <span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;openfeign.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.httpcomponents<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.5.11<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.openfeign<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>10.7.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="string">$&#123;SERVICE_PORT:18680&#125;</span></span><br><span class="line">  <span class="attr">compression:</span> <span class="comment"># 開啓壓縮請求</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">mime-types:</span> <span class="string">application/json,application/xml,text/html,text/xml,text/plain</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">eurekademo-service-order-feign-test</span></span><br><span class="line">  <span class="attr">jpa:</span></span><br><span class="line">    <span class="attr">database-platform:</span> <span class="string">org.hibernate.dialect.MySQL8Dialect</span></span><br><span class="line">    <span class="attr">show-sql:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">hibernate:</span></span><br><span class="line">      <span class="attr">naming:</span></span><br><span class="line">        <span class="attr">physical-strategy:</span> <span class="string">org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl</span></span><br><span class="line">      <span class="attr">ddl-auto:</span> <span class="string">update</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123456</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:4306/eurekademo</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">inetutils:</span></span><br><span class="line">      <span class="attr">ignoredInterfaces:</span> [<span class="string">&#x27;VMware.*&#x27;</span>,<span class="string">&#x27;ingress&#x27;</span>] <span class="comment"># 必须过滤掉VMware 因为会豁达86.1</span></span><br><span class="line">      <span class="attr">preferred-networks:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">$&#123;NET_DOMAIN:192.168/16&#125;</span> <span class="comment">#必须只选择192网段的否则会选择一些虚拟机网卡</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">register-with-eureka:</span> <span class="literal">false</span> <span class="comment"># 将自己注册到注册中心 默认 true</span></span><br><span class="line">    <span class="attr">fetch-registry:</span> <span class="literal">true</span> <span class="comment"># 是否从注册中心获取服务注册信息 默认true</span></span><br><span class="line">    <span class="attr">service-url:</span></span><br><span class="line">      <span class="attr">defaultZone:</span> <span class="string">http://root:123456@localhost:18761/eureka/,http://root:123456@localhost:18762/eureka/,http://root:123456@localhost:18763/eureka/</span></span><br><span class="line">    <span class="attr">registry-fetch-interval-seconds:</span> <span class="number">10</span> <span class="comment"># 表示 eureka Client 间隔多久去服务器拉取注册信息，默认为 30 秒。</span></span><br><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">httpclient:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment">#开启httpClient</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">connectTimeout:</span> <span class="number">3000</span></span><br><span class="line">        <span class="attr">readTimeout:</span> <span class="number">3000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="构建一个feign的调service"><a href="#构建一个feign的调service" class="headerlink" title="构建一个feign的调service"></a>构建一个feign的调service</h3><ol>
+<li><p>创建一个service使用FeignClient注解进行调用</p>
+</li>
+<li><p>用REST风格的注解调用远端接口</p>
+</li>
+<li><p>在Application中使用<code>@EnableFeignClients</code></p>
+</li>
+<li><p>在<code>application.yml</code> 中加入circuitbreaker开启的注解</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">circuitbreaker:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="雪崩处理例子"><a href="#雪崩处理例子" class="headerlink" title="雪崩处理例子"></a>雪崩处理例子</h3><ul>
+<li><p>修改<code>@FeignClient</code>注解</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@FeignClient(name = &quot;eurekademo-service-product&quot; , fallback = ProductServiceFallback.class)</span><br></pre></td></tr></table></figure></li>
+<li><p>创建ProductServiceFallback 并且继承ProductService并实现</p>
+</li>
+<li><p>必须引用spring-cloud-starter-netflix-hystrix</p>
+</li>
+<li><p>再关闭product引用并且调用就可以访问到兜底方法了</p>
+</li>
+</ul>
+<h3 id="关键问题解决！！！！"><a href="#关键问题解决！！！！" class="headerlink" title="关键问题解决！！！！"></a>关键问题解决！！！！</h3><p>在新版本中比如3.0.4必须要引用<code>spring-cloud-starter-netflix-hystrix</code> 才能正常回退。</p>
+<p>并且需要开启ciruitbreaker</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">circuitbreaker:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="通过工厂回调-记录日志"><a href="#通过工厂回调-记录日志" class="headerlink" title="通过工厂回调(记录日志)"></a>通过工厂回调(记录日志)</h3><ul>
+<li><p>指定调用</p>
+<p>在ProductService的FeignClient注解中加入参数fallbackFactory=ProductServiceFallbackFactory.class</p>
+</li>
+<li><p>编写Factory代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.akachi.eurekademo.order.service.impl.fallback.factory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.akachi.eurekademo.order.service.ProductService;</span><br><span class="line"><span class="keyword">import</span> org.akachi.eurekademo.product.model.Product;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FallbackFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> akachi</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Email</span> zsts@hotmail.com</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2021/11/26 0:09</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductServiceFallbackFactory</span> <span class="keyword">implements</span> <span class="title">FallbackFactory</span>&lt;<span class="title">ProductService</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ProductService <span class="title">create</span><span class="params">(Throwable cause)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ProductService() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> List&lt;Product&gt; <span class="title">getProducts</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                log.error(<span class="string">&quot;fallback getProducts&quot;</span>+cause);</span><br><span class="line">                cause.printStackTrace();</span><br><span class="line">                Product product = <span class="keyword">new</span> Product();</span><br><span class="line">                List&lt;Product&gt; productList = <span class="keyword">new</span> ArrayList();</span><br><span class="line">                productList.add(product);</span><br><span class="line">                product.setName(<span class="string">&quot;兜底数据&quot;</span>);</span><br><span class="line">                product.setCode(<span class="string">&quot;-1&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> productList;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Product <span class="title">getProductById</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">                log.error(<span class="string">&quot;fallback getProductById&quot;</span>+cause);</span><br><span class="line">                cause.printStackTrace();</span><br><span class="line">                Product product = <span class="keyword">new</span> Product();</span><br><span class="line">                product.setName(<span class="string">&quot;兜底数据&quot;</span>);</span><br><span class="line">                product.setCode(<span class="string">&quot;-1&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> product;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> List&lt;Product&gt; <span class="title">getProductByCodes</span><span class="params">(List&lt;String&gt; ids)</span> </span>&#123;</span><br><span class="line">                log.error(<span class="string">&quot;fallback getProductByCodes&quot;</span>+cause);</span><br><span class="line">                cause.printStackTrace();</span><br><span class="line">                Product product = <span class="keyword">new</span> Product();</span><br><span class="line">                List&lt;Product&gt; productList = <span class="keyword">new</span> ArrayList();</span><br><span class="line">                productList.add(product);</span><br><span class="line">                product.setName(<span class="string">&quot;兜底数据&quot;</span>);</span><br><span class="line">                product.setCode(<span class="string">&quot;-1&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> productList;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><ul>
+<li><p>spring cloud docs:<a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-openfeign">https://spring.io/projects/spring-cloud-openfeign</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/">https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/</a></p>
+</li>
+<li><p>feign的注解和调用方法参考文档: <a target="_blank" rel="noopener" href="https://github.com/OpenFeign/feign">https://github.com/OpenFeign/feign</a></p>
+</li>
+<li><p>bilibili课程: <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1pv411776G?p=6&amp;spm_id_from=pageDriver">https://www.bilibili.com/video/BV1pv411776G?p=6&amp;spm_id_from=pageDriver</a></p>
+</li>
+<li><p>spring-loadbalancer:<a target="_blank" rel="noopener" href="https://spring.io/guides/gs/spring-cloud-loadbalancer/">https://spring.io/guides/gs/spring-cloud-loadbalancer/</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign-overriding-defaults">https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign-overriding-defaults</a></p>
+<blockquote>
+<p>修改配置参考</p>
+</blockquote>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Akachi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://artificial-deus.github.io/2017/02/28/Spring/Spring%20Cloud%20Feign-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://artificial-deus.github.io/2017/02/28/Spring/Spring%20Cloud%20Feign-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring/">Spring</a><a class="post-meta__tags" href="/tags/Spring-Cloud/">Spring Cloud</a><a class="post-meta__tags" href="/tags/Feign/">Feign</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2017/02/28/Spring/Spring%20Cloud%20Eureka-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><img class="prev-cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Spring Cloud Eureka-学习笔记</div></div></a></div><div class="next-post pull-right"><a href="/2016/02/28/Spring/Spring%20Boot/"><img class="next-cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Spring Boot</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2016/02/28/Spring/Spring%20Boot/" title="Spring Boot"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2016-02-28</div><div class="title">Spring Boot</div></div></a></div><div><a href="/2017/02/28/Spring/Spring%20Cloud%20Consul-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Consul-学习笔记"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2017-02-28</div><div class="title">Spring Cloud Consul-学习笔记</div></div></a></div><div><a href="/2017/02/28/Spring/Spring%20Cloud%20Eureka-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Eureka-学习笔记"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2017-02-28</div><div class="title">Spring Cloud Eureka-学习笔记</div></div></a></div><div><a href="/2016/02/28/Spring/Spring%20Cloud%20%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/" title="Spring Cloud 组件介绍"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2016-02-28</div><div class="title">Spring Cloud 组件介绍</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring-Cloud-Feign"><span class="toc-number">1.</span> <span class="toc-text">Spring Cloud Feign</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">介绍:</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.1.</span> <span class="toc-text">核心思想:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E4%B8%AA%E6%A1%88%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">写个案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="toc-number">1.2.1.</span> <span class="toc-text">加载依赖包</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E4%BE%9D%E8%B5%96"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">加载依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">构建项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">调用接口</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Feign%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">1.3.</span> <span class="toc-text">Feign负载均衡</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.1.</span> <span class="toc-text">全局负载均衡配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">1.3.2.</span> <span class="toc-text">局部配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%A6%E6%9C%89%E5%8F%82%E6%95%B0%E7%9A%84%E8%AF%B7%E6%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text">带有参数的请求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#post%E4%BC%A0%E5%8F%82"><span class="toc-number">1.4.1.</span> <span class="toc-text">post传参</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gzip-%E5%8E%8B%E7%BC%A9"><span class="toc-number">1.5.</span> <span class="toc-text">Gzip 压缩</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEGzip"><span class="toc-number">1.5.1.</span> <span class="toc-text">配置Gzip</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E9%85%8D%E7%BD%AE-1"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">局部配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">全局配置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87"><span class="toc-number">1.6.</span> <span class="toc-text">http性能提升</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E7%94%A8httpClient"><span class="toc-number">1.6.1.</span> <span class="toc-text">启用httpClient</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Get-RequestBody%E4%BC%A0%E9%80%92%E5%AF%B9%E8%B1%A1%E5%8F%82%E6%95%B0"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">Get RequestBody传递对象参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E7%8A%B6%E6%80%81%E6%9F%A5%E7%9C%8B"><span class="toc-number">1.6.2.</span> <span class="toc-text">性能调优状态查看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E8%83%BD%E8%B0%83%E4%BC%98%EF%BC%8C%E8%B6%85%E6%97%B6%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.6.3.</span> <span class="toc-text">新能调优，超时设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Feign%E7%9A%84%E9%9B%AA%E5%B4%A9%E5%A4%84%E7%90%86"><span class="toc-number">1.7.</span> <span class="toc-text">Feign的雪崩处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%BC%95%E7%94%A8"><span class="toc-number">1.7.1.</span> <span class="toc-text">依赖引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.7.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AAfeign%E7%9A%84%E8%B0%83service"><span class="toc-number">1.7.3.</span> <span class="toc-text">构建一个feign的调service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%AA%E5%B4%A9%E5%A4%84%E7%90%86%E4%BE%8B%E5%AD%90"><span class="toc-number">1.7.4.</span> <span class="toc-text">雪崩处理例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81"><span class="toc-number">1.7.5.</span> <span class="toc-text">关键问题解决！！！！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%B7%A5%E5%8E%82%E5%9B%9E%E8%B0%83-%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97"><span class="toc-number">1.7.6.</span> <span class="toc-text">通过工厂回调(记录日志)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%96%99"><span class="toc-number">1.8.</span> <span class="toc-text">资料</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Akachi</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="algolia-search"><div class="search-dialog"><div class="search-dialog__title" id="algolia-search-title">Algolia</div><div id="algolia-input-panel"><div id="algolia-search-input"></div></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-stats"></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.5/dist/instantsearch.min.js"></script><script src="/js/search/algolia.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '413261098f0d1fc4c7fe',
+      clientSecret: '7b01f9f497ef8a14cf8d77449d4e348b9beb153a',
+      repo: 'artificial-deus.github.io',
+      owner: 'artificial-deus',
+      admin: ['akachi10'],
+      id: '846b9bdf521a1c9d98a64abff6bfcc9f',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
