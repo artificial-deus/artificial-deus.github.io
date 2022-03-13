@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Spring Cloud Zuul-学习笔记 | Akachi's blog</title><meta name="keywords" content="Spring,Spring Cloud,zuul"><meta name="author" content="Akachi"><meta name="copyright" content="Akachi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Spring Cloud Zuul 使用SpringBoot2 开发的基于Spring Framework 5开发的Gateway框架，用于替代 Netflix zuul  介绍 网关的功能 让客户端只需要访问一个服务地址  保护网内的服务调用安全  实现了 监控、弹性和安全性的路由  过滤器完成以下功能  跨域问题 只要访问网关就能解决跨域问题  身份认证与安全   审查监控  动态路由  压力">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud Zuul-学习笔记">
+<meta property="og:url" content="https://artificial-deus.github.io/2018/02/28/Spring/Spring%20Cloud%20Zuul-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Akachi&#39;s blog">
+<meta property="og:description" content="Spring Cloud Zuul 使用SpringBoot2 开发的基于Spring Framework 5开发的Gateway框架，用于替代 Netflix zuul  介绍 网关的功能 让客户端只需要访问一个服务地址  保护网内的服务调用安全  实现了 监控、弹性和安全性的路由  过滤器完成以下功能  跨域问题 只要访问网关就能解决跨域问题  身份认证与安全   审查监控  动态路由  压力">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg">
+<meta property="article:published_time" content="2018-02-28T15:00:42.000Z">
+<meta property="article:modified_time" content="2021-12-10T14:17:51.571Z">
+<meta property="article:author" content="Akachi">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Spring Cloud">
+<meta property="article:tag" content="zuul">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg"><link rel="shortcut icon" href="https://raw.githubusercontent.com/akachi10/notes/master/god_dice.jfif"><link rel="canonical" href="https://artificial-deus.github.io/2018/02/28/Spring/Spring%20Cloud%20Zuul-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.5/dist/instantsearch.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a04e00a053a6685b9b86ca842f0f2e2f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BGTJN89SV4"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-BGTJN89SV4');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: {"appId":"FCSTQQ895M","apiKey":"72acbaa4c88844d34550b999e19531f0","indexName":"blog-search","hits":{"per_page":6},"languages":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}.","hits_stats":"${hits} results found in ${time} ms"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Cloud Zuul-学习笔记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-12-10 22:17:51'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/38939292?s=60&amp;v=4" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">20</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">33</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">16</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Akachi's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring Cloud Zuul-学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2018-02-28T15:00:42.000Z" title="Created 2018-02-28 23:00:42">2018-02-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-12-10T14:17:51.571Z" title="Updated 2021-12-10 22:17:51">2021-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/zuul/">zuul</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring Cloud Zuul-学习笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Spring-Cloud-Zuul"><a href="#Spring-Cloud-Zuul" class="headerlink" title="Spring Cloud Zuul"></a>Spring Cloud Zuul</h1><blockquote>
+<p>使用SpringBoot2 开发的基于Spring Framework 5开发的Gateway框架，用于替代 Netflix zuul</p>
+</blockquote>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/12/08/153719.png" alt="image-20211208153717511"></p>
+<h3 id="网关的功能"><a href="#网关的功能" class="headerlink" title="网关的功能"></a>网关的功能</h3><ul>
+<li><p>让客户端只需要访问一个服务地址</p>
+</li>
+<li><p>保护网内的服务调用安全</p>
+</li>
+<li><p>实现了 监控、弹性和安全性的路由</p>
+</li>
+<li><p>过滤器完成以下功能</p>
+<ul>
+<li><p>跨域问题</p>
+<p>只要访问网关就能解决跨域问题</p>
+</li>
+<li><p>身份认证与安全 </p>
+</li>
+<li><p>审查监控</p>
+</li>
+<li><p>动态路由</p>
+</li>
+<li><p>压力测试</p>
+</li>
+<li><p>负载分配</p>
+</li>
+<li><p>静态响应处理</p>
+</li>
+<li><p>多区域弹性</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h3><ul>
+<li>Nginx + Lua</li>
+<li>Kong</li>
+<li>Traefik</li>
+<li>Spring Cloud Netflix Zuul</li>
+<li>Spring Cloud Gateway</li>
+</ul>
+<h3 id="网关的工作方式"><a href="#网关的工作方式" class="headerlink" title="网关的工作方式"></a>网关的工作方式</h3><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/12/08/165812.png" alt="image-20211208165809450"></p>
+<h2 id="搭建方式"><a href="#搭建方式" class="headerlink" title="搭建方式"></a>搭建方式</h2><h3 id="创建一个注册中心"><a href="#创建一个注册中心" class="headerlink" title="创建一个注册中心"></a>创建一个注册中心</h3><h3 id="创建一个Product"><a href="#创建一个Product" class="headerlink" title="创建一个Product"></a>创建一个Product</h3><h3 id="创建一个Order-用Feing"><a href="#创建一个Order-用Feing" class="headerlink" title="创建一个Order 用Feing"></a>创建一个Order 用Feing</h3><h3 id="搭建一个nginx-负载均衡到多个Gateway"><a href="#搭建一个nginx-负载均衡到多个Gateway" class="headerlink" title="搭建一个nginx 负载均衡到多个Gateway"></a>搭建一个nginx 负载均衡到多个Gateway</h3><h3 id="使用zuul"><a href="#使用zuul" class="headerlink" title="使用zuul"></a>使用zuul</h3><ol>
+<li><p>manven中引入 org.springframework.cloud spring-cloud-starter-netflix-zuul包</p>
+</li>
+<li><p>application.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">zuul:</span></span><br><span class="line"> <span class="attr">ignoredServices:</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"> <span class="attr">routes:</span></span><br><span class="line">   <span class="attr">users:</span> <span class="string">/myusers/**</span> <span class="comment"># myusers是前缀</span></span><br></pre></td></tr></table></figure></li>
+<li><p>Application启动类上加入<code>@EnableZuulProxy</code></p>
+</li>
+<li><p>application.yml中添加路由规则</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">zuul:</span></span><br><span class="line"> <span class="attr">routes:</span></span><br><span class="line">   <span class="attr">users:</span> <span class="comment"># 自定义ID 可以有多个</span></span><br><span class="line">     <span class="attr">path:</span> <span class="string">/myusers/**</span> <span class="comment"># URL映射路径</span></span><br><span class="line">     <span class="attr">serviceId:</span> <span class="string">users_service</span> <span class="comment">#eureka的注册中心的ID</span></span><br></pre></td></tr></table></figure></li>
+<li><p>由于已经有了 Web Actuator hystrix ribbon 所以这些都不必添加了</p>
+</li>
+<li><p>pom.xml 全文</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.3.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.akachi.eurekademo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zuul-service<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>zuul-service<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>11<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>Finchley.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-zuul<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.0.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.0.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>application.yml 全文</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="string">$&#123;SERVICE_PORT:18880&#125;</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">zuul-service</span></span><br><span class="line">  <span class="attr">main:</span></span><br><span class="line">    <span class="attr">allow-bean-definition-overriding:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">register-with-eureka:</span> <span class="literal">true</span> <span class="comment"># 将自己注册到注册中心 默认 true</span></span><br><span class="line">    <span class="attr">fetch-registry:</span> <span class="literal">true</span> <span class="comment"># 是否从注册中心获取服务注册信息 默认true</span></span><br><span class="line">    <span class="attr">service-url:</span></span><br><span class="line">      <span class="attr">defaultZone:</span> <span class="string">http://root:123456@localhost:18761/eureka/,http://root:123456@localhost:18762/eureka/,http://root:123456@localhost:18763/eureka/</span></span><br><span class="line">    <span class="attr">registry-fetch-interval-seconds:</span> <span class="number">1000</span> <span class="comment"># 表示 eureka Client 间隔多久去服务器拉取注册信息，默认为 30 秒。</span></span><br><span class="line">  <span class="attr">zuul:</span></span><br><span class="line">    <span class="attr">routes:</span></span><br><span class="line">      <span class="attr">eurekademo-service-product:</span> <span class="comment"># 自定义ID 可以有多个</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/product/**</span> <span class="comment"># URL映射路径</span></span><br><span class="line">        <span class="attr">serviceId:</span> <span class="string">eurekademo-service-product</span> <span class="comment">#eureka的注册中心的ID</span></span><br></pre></td></tr></table></figure></li>
+<li><p>由于约定大于配置其实不必配置zuul rules也可以通过刚才的地址访问（只要集成eureka）</p>
+</li>
+</ol>
+<h4 id="路由配置"><a href="#路由配置" class="headerlink" title="路由配置"></a>路由配置</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">zuul:</span></span><br><span class="line">  <span class="attr">ignored-services:</span> <span class="string">/**/list</span> <span class="comment">#/product/list 就访问不到</span></span><br><span class="line">  <span class="attr">ignored-patterns:</span> <span class="string">eurekademo-service-product</span> <span class="comment"># 排除service多个就&quot;,&quot;分割</span></span><br><span class="line">  <span class="attr">ignored-headers:</span> </span><br><span class="line">  <span class="attr">prefix:</span> <span class="string">/shop</span> <span class="comment">#前缀配置</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="过滤器"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器</h2><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2021/12/09/144252.png" alt="image-20211209144240557"></p>
+<h3 id="过滤类型"><a href="#过滤类型" class="headerlink" title="过滤类型"></a>过滤类型</h3><ul>
+<li>pre 配置路径与配置路由规则 找到需要转发的目标地址<ul>
+<li>身份认证</li>
+<li>选择路由</li>
+<li>请求日志</li>
+</ul>
+</li>
+<li>routing 转发请求通过routing来完成</li>
+<li>post 是返回信息<ul>
+<li>对响应增加http头</li>
+<li>收集统计度量指标</li>
+<li>将响应以流的方式发送回客户端</li>
+</ul>
+</li>
+<li>error 任意过程出现问题都会转到error</li>
+</ul>
+<h3 id="关键名词"><a href="#关键名词" class="headerlink" title="关键名词"></a>关键名词</h3><ul>
+<li>执行顺序 integer中数值越小越先执行，同类型之间进行排序,不同类型的执行顺序是  pre&gt;routing&gt;post</li>
+<li>条件，可以开关过滤器</li>
+<li>动作: 执行符合条件的动作</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://mrhelloworld.com/">https://mrhelloworld.com/</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-netflix/docs/2.2.11.BUILD-SNAPSHOT/reference/html/#router-and-filter-zuul">https://docs.spring.io/spring-cloud-netflix/docs/2.2.11.BUILD-SNAPSHOT/reference/html/#router-and-filter-zuul</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Akachi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://artificial-deus.github.io/2018/02/28/Spring/Spring%20Cloud%20Zuul-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://artificial-deus.github.io/2018/02/28/Spring/Spring%20Cloud%20Zuul-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring/">Spring</a><a class="post-meta__tags" href="/tags/Spring-Cloud/">Spring Cloud</a><a class="post-meta__tags" href="/tags/zuul/">zuul</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2018/02/28/Spring/Spring%20Cloud%20Gateway-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><img class="prev-cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Spring Cloud Gateway-学习笔记</div></div></a></div><div class="next-post pull-right"><a href="/2018/02/28/Spring/Spring%20Cloud%20Sentinel-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.md/"><img class="next-cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/5.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Spring Cloud Gateway-学习笔记</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2017/02/28/Spring/Spring%20Cloud%20Consul-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Consul-学习笔记"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2017-02-28</div><div class="title">Spring Cloud Consul-学习笔记</div></div></a></div><div><a href="/2017/02/28/Spring/Spring%20Cloud%20Eureka-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Eureka-学习笔记"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2017-02-28</div><div class="title">Spring Cloud Eureka-学习笔记</div></div></a></div><div><a href="/2016/02/28/Spring/Spring%20Cloud%20%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/" title="Spring Cloud 组件介绍"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2016-02-28</div><div class="title">Spring Cloud 组件介绍</div></div></a></div><div><a href="/2017/02/28/Spring/Spring%20Cloud%20Hystrix-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Hystrix"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2017-02-28</div><div class="title">Spring Cloud Hystrix</div></div></a></div><div><a href="/2017/02/28/Spring/Spring%20Cloud%20Feign-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Feign"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2017-02-28</div><div class="title">Spring Cloud Feign</div></div></a></div><div><a href="/2018/02/28/Spring/Spring%20Cloud%20Gateway-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Cloud Gateway-学习笔记"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2018-02-28</div><div class="title">Spring Cloud Gateway-学习笔记</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring-Cloud-Zuul"><span class="toc-number">1.</span> <span class="toc-text">Spring Cloud Zuul</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E5%85%B3%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">1.1.1.</span> <span class="toc-text">网关的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.2.</span> <span class="toc-text">实现方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E5%85%B3%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.3.</span> <span class="toc-text">网关的工作方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">搭建方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建一个注册中心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAProduct"><span class="toc-number">1.2.2.</span> <span class="toc-text">创建一个Product</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAOrder-%E7%94%A8Feing"><span class="toc-number">1.2.3.</span> <span class="toc-text">创建一个Order 用Feing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAnginx-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%88%B0%E5%A4%9A%E4%B8%AAGateway"><span class="toc-number">1.2.4.</span> <span class="toc-text">搭建一个nginx 负载均衡到多个Gateway</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8zuul"><span class="toc-number">1.2.5.</span> <span class="toc-text">使用zuul</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">路由配置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">过滤类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%90%8D%E8%AF%8D"><span class="toc-number">1.3.2.</span> <span class="toc-text">关键名词</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">1.4.</span> <span class="toc-text">参考资料</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('https://raw.githubusercontent.com/akachi10/blog-pic/main/2.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Akachi</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="algolia-search"><div class="search-dialog"><div class="search-dialog__title" id="algolia-search-title">Algolia</div><div id="algolia-input-panel"><div id="algolia-search-input"></div></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-stats"></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.5/dist/instantsearch.min.js"></script><script src="/js/search/algolia.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '413261098f0d1fc4c7fe',
+      clientSecret: '7b01f9f497ef8a14cf8d77449d4e348b9beb153a',
+      repo: 'artificial-deus.github.io',
+      owner: 'artificial-deus',
+      admin: ['akachi10'],
+      id: 'cbdb9f235e370be0406211462eb5bace',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
