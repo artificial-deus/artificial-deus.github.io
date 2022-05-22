@@ -1,0 +1,418 @@
+<!DOCTYPE html><html lang="cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>JVM 中篇 | Akachi's blog</title><meta name="keywords" content="java,jvm"><meta name="author" content="Akachi"><meta name="copyright" content="Akachi"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="JVM 中篇字节码与类的加载篇 概述java规范和虚拟机规范的关系  JAVA 规范指的是 java语言的规范，使用符合java规范的编译器讲java编译成class。比如javac编译器。  JVM 规范指的是java虚拟机规范 有很多实现，比如阿里的实现、华为的和ibm的实现。它们负责从导入class文件开始工作。   字节码文件的跨平台性通过java编译器编译完成的文件class，可以在不同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 中篇">
+<meta property="og:url" content="https://artificial-deus.github.io/2015/08/01/java/JVM%20%E4%B8%AD%E7%AF%87/index.html">
+<meta property="og:site_name" content="Akachi&#39;s blog">
+<meta property="og:description" content="JVM 中篇字节码与类的加载篇 概述java规范和虚拟机规范的关系  JAVA 规范指的是 java语言的规范，使用符合java规范的编译器讲java编译成class。比如javac编译器。  JVM 规范指的是java虚拟机规范 有很多实现，比如阿里的实现、华为的和ibm的实现。它们负责从导入class文件开始工作。   字节码文件的跨平台性通过java编译器编译完成的文件class，可以在不同">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg">
+<meta property="article:published_time" content="2015-08-01T15:00:42.000Z">
+<meta property="article:modified_time" content="2022-05-16T12:48:33.915Z">
+<meta property="article:author" content="Akachi">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg"><link rel="shortcut icon" href="https://raw.githubusercontent.com/akachi10/notes/master/god_dice.jfif"><link rel="canonical" href="https://artificial-deus.github.io/2015/08/01/java/JVM%20%E4%B8%AD%E7%AF%87/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.5/dist/instantsearch.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a04e00a053a6685b9b86ca842f0f2e2f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BGTJN89SV4"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-BGTJN89SV4');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: {"appId":"FCSTQQ895M","apiKey":"72acbaa4c88844d34550b999e19531f0","indexName":"blog-search","hits":{"per_page":6},"languages":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}.","hits_stats":"${hits} results found in ${time} ms"}},
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'JVM 中篇',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-16 20:48:33'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://avatars.githubusercontent.com/u/38939292?s=60&amp;v=4" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">39</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">19</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Akachi's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 类别</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">JVM 中篇</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2015-08-01T15:00:42.000Z" title="Created 2015-08-01 23:00:42">2015-08-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-05-16T12:48:33.915Z" title="Updated 2022-05-16 20:48:33">2022-05-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/java/">java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="JVM 中篇"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="JVM-中篇"><a href="#JVM-中篇" class="headerlink" title="JVM 中篇"></a>JVM 中篇</h1><p>字节码与类的加载篇</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>java规范和虚拟机规范的关系</p>
+<ul>
+<li><p>JAVA 规范指的是</p>
+<p>java语言的规范，使用符合java规范的编译器讲java编译成class。比如javac编译器。</p>
+</li>
+<li><p>JVM 规范指的是java虚拟机规范</p>
+<p>有很多实现，比如阿里的实现、华为的和ibm的实现。它们负责从导入class文件开始工作。</p>
+</li>
+</ul>
+<h3 id="字节码文件的跨平台性"><a href="#字节码文件的跨平台性" class="headerlink" title="字节码文件的跨平台性"></a>字节码文件的跨平台性</h3><p>通过java编译器编译完成的文件class，可以在不同的平台上运行，只要平台上安装了JVM。</p>
+<h3 id="java的前端编译器"><a href="#java的前端编译器" class="headerlink" title="java的前端编译器"></a>java的前端编译器</h3><p>java编译器要完成编译有以下几个步骤。</p>
+<ul>
+<li>词法解析</li>
+<li>语法解析</li>
+<li>语义解析</li>
+<li>生成字节码</li>
+</ul>
+<h4 id="前段编译器和后端编译器的关系"><a href="#前段编译器和后端编译器的关系" class="headerlink" title="前段编译器和后端编译器的关系"></a>前段编译器和后端编译器的关系</h4><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/10/004601.png" alt="image-20220510004545804"></p>
+<p>前端编译器编译后的文件有可能进入解释器被执行，也有可能成为热点代码进入JIT执行。在JIT中代码执行效率会高很多。这也是为什么java被定义为半解释半编译行语言。</p>
+<h5 id="其他前端编译器"><a href="#其他前端编译器" class="headerlink" title="其他前端编译器"></a>其他前端编译器</h5><ul>
+<li>javac</li>
+<li>ECJ eclipse的</li>
+<li>AspectJ IDEA的</li>
+</ul>
+<h5 id="后端编译器"><a href="#后端编译器" class="headerlink" title="后端编译器"></a>后端编译器</h5><ul>
+<li><p>AOT</p>
+<p>程序运行之前直接把文件翻译成机器指令。</p>
+<p>会破坏java的跨平台性。</p>
+<p>目前只处于linux中</p>
+</li>
+<li><p>JIT</p>
+<p>在HotSpot中将热点代码编译为机器码。</p>
+</li>
+</ul>
+<h3 id="java文件看不到的执行过程"><a href="#java文件看不到的执行过程" class="headerlink" title="java文件看不到的执行过程"></a>java文件看不到的执行过程</h3><h4 id="例1：Integer"><a href="#例1：Integer" class="headerlink" title="例1：Integer"></a>例1：Integer</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">        Integer i1 = <span class="number">10</span>;</span><br><span class="line">        Integer i2 = <span class="number">10</span>;</span><br><span class="line">        Integer i3 = <span class="number">128</span>;</span><br><span class="line">        Integer i4 = <span class="number">128</span>;</span><br><span class="line">        System.out.println(i1 == i2);</span><br><span class="line">        System.out.println(i3 == i4);</span><br><span class="line"><span class="comment">// 答案是 true false</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>再字节码中回去调用Integer.valueOf();</p>
+<p>Integer的静态代码块中有堆一个定义的静态数组 cache进行赋值</p>
+<p>从-128到127，并且再调用Integer.valueOf时间会比较是否在诉数组范围内，如果在的话就直接从cache[]取得。所以小于128的值的对比是true，应为是同一个对象。</p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/08/232324.png" alt="image-20220508232312895"></p>
+</blockquote>
+<h4 id="列2-String-的hello-world拼接"><a href="#列2-String-的hello-world拼接" class="headerlink" title="列2: String 的hello world拼接"></a>列2: String 的hello world拼接</h4><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/10/015030.png" alt="image-20220510015029282"></p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/10/015006.png" alt="image-20220510015003627"></p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/10/230642.png" alt="image-20220510230629580"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">0 new一个String builder</span><br><span class="line">3 dup 不明</span><br><span class="line">4 将调用init方法</span><br><span class="line">7 new String</span><br><span class="line">10 dup 不明</span><br><span class="line">11 ldc 引入hello字面量</span><br><span class="line">13 执行String的init方法</span><br><span class="line">16 将String append到String builder</span><br><span class="line">19 新建一个String</span><br><span class="line">22 不明</span><br><span class="line">23 引入字面两world</span><br><span class="line">25 执行string的init</span><br><span class="line">28 将string append到String Builder</span><br><span class="line">31 toString 活的一个新字符串</span><br><span class="line">34 放进操作数栈里</span><br><span class="line">35 ldc #10 加载一个字面量 heloworld</span><br><span class="line">37 放入操作数栈</span><br><span class="line">38 getstatic 执行今天方法</span><br><span class="line">aload_1 加载第一个字符串</span><br><span class="line">aload_2 加载第二个字符串</span><br><span class="line">if_acmpne 比较两个字符串</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="列3-父子类"><a href="#列3-父子类" class="headerlink" title="列3: 父子类"></a>列3: 父子类</h4><ul>
+<li><p>Father</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.akachi.classFile;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> akachi</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Email</span> zsts@hotmail.com</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2022/5/11 19:34</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Father</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> x = <span class="number">10</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Father</span><span class="params">()</span></span>&#123;</span><br><span class="line">        print();</span><br><span class="line">        x = <span class="number">20</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Father:&quot;</span>+x);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>Son</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.akachi.classFile;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> akachi</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Email</span> zsts@hotmail.com</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2022/5/11 19:34</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Son</span> <span class="keyword">extends</span> <span class="title">Father</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">30</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Son</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.print();</span><br><span class="line">        x = <span class="number">40</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;son x:&quot;</span>+<span class="keyword">this</span>.x);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Son();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>执行结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">son x:0</span><br><span class="line">son x:30</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
+
+<p>执行 原理：</p>
+<p>Father init执行过程</p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/11/222152.png" alt="image-20220511222149779"></p>
+<p>Son的init方法</p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/11/222355.png" alt="image-20220511222354594"></p>
+<p>成员变量的复制过程：</p>
+<p>在调用Son的init方法时会去调用father的init方法，并且会调用father的init方法，但是调用的print方法确是子类重写的。但子类的x变了并未被复制所以这里打印出来的是子类的x的默认值0.</p>
+<p>验证:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Son</span> <span class="keyword">extends</span> <span class="title">Father</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">30</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Son</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.printSon();</span><br><span class="line">        x = <span class="number">40</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printSon</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;son x:&quot;</span>+<span class="keyword">this</span>.x);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Son();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将代码改成以下使调用father时不会调用printSon就可以使值打赢正常。</p>
+<p>变了默认初始化过程:</p>
+<p>默认初始化、显示初始化、构造器初始化、有了对象后可以对象.属性或对象.方法的方式堆成员变量赋值。</p>
+<h2 id="Class文件结构"><a href="#Class文件结构" class="headerlink" title="Class文件结构"></a>Class文件结构</h2><p>任何一个Class都对应一个Java类，但是并非所有class都是以磁盘的方式呈现的。</p>
+<p>Class的本质是个二进制流，可以只存在于内存。</p>
+<p>CLass文件采用类似于C语言结构体的方式来存储，这种结构中只有两种数据类型：无符号数和表。</p>
+<ul>
+<li>无符号数、以u1 u2 u4 u8 代表字节数。无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值。</li>
+<li>表是由一系列无符号数活其他作为数据项构成的符合数据类型，所以表都习惯性的以”_info”结尾。用于描述层次和关系的复合结构数据。整个Class文件本质上使一张表。由于表没有固定长度，所有通常会在其前面加上个数说明。</li>
+</ul>
+<h3 id="CLass组成部分："><a href="#CLass组成部分：" class="headerlink" title="CLass组成部分："></a>CLass组成部分：</h3><ul>
+<li>魔数</li>
+<li>CLass文件版本</li>
+<li>常量池</li>
+<li>访问标志</li>
+<li>类索引、父类索引、接口索引</li>
+<li>字段表集合</li>
+<li>放发表集合</li>
+<li>属性表集合</li>
+</ul>
+<h4 id="解释："><a href="#解释：" class="headerlink" title="解释："></a>解释：</h4><p>The <code>ClassFile</code> Structure</p>
+<p>A <code>class</code> file consists of a single <code>ClassFile</code> structure:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ClassFile &#123;</span><br><span class="line">    u4             magic;</span><br><span class="line">    u2             minor_version;</span><br><span class="line">    u2             major_version;</span><br><span class="line">    u2             constant_pool_count;</span><br><span class="line">    cp_info        constant_pool[constant_pool_count-1];</span><br><span class="line">    u2             access_flags;</span><br><span class="line">    u2             this_class;</span><br><span class="line">    u2             super_class;</span><br><span class="line">    u2             interfaces_count;</span><br><span class="line">    u2             interfaces[interfaces_count];</span><br><span class="line">    u2             fields_count;</span><br><span class="line">    field_info     fields[fields_count];</span><br><span class="line">    u2             methods_count;</span><br><span class="line">    method_info    methods[methods_count];</span><br><span class="line">    u2             attributes_count;</span><br><span class="line">    attribute_info attributes[attributes_count];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The items in the <code>ClassFile</code> structure are as follows:</p>
+<ul>
+<li><p>魔数</p>
+<p>4个字节，标识编译器。识别它是一个class文件的标识。</p>
+</li>
+<li><p>文件版本</p>
+<p>两个 U2 的版本表示大版本和小版本。</p>
+<p>minor_version、major_version;</p>
+</li>
+<li><p>常量池</p>
+<ul>
+<li>2个字节的常量池长度标识constant_pool_count;</li>
+<li>cp_info 长度是constant_pool[constant_pool_count-1]</li>
+</ul>
+</li>
+<li><p>访问标识</p>
+<p>2个字节的access_flag </p>
+<p>表示类的类型、是类、接口、enum、有没有final？</p>
+</li>
+<li><p>类索引、父类索引、接口结合索引</p>
+<ul>
+<li>2字节的类名 this_class;</li>
+<li>2字节的父类 super_class; </li>
+<li>2字节的接口数量 interfaces_count;</li>
+<li>2字节接口名 [interfaces_count]个；</li>
+</ul>
+</li>
+<li><p>字段信息</p>
+<ul>
+<li>2字节 字段数量 fields_count</li>
+<li>field_info fields_count个u2</li>
+</ul>
+</li>
+<li><p>方法信息</p>
+<ul>
+<li>2字节的方法数量 methods_count</li>
+<li>method_info 方法信息 [methods_count]个方法信息；</li>
+</ul>
+</li>
+<li><p>属性表集合</p>
+<ul>
+<li>2个字节的属性表信息数量 attributes_count;</li>
+<li>属性信息 attribute_info attributes_count个属性信息；</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是字节码"><a href="#什么是字节码" class="headerlink" title="什么是字节码"></a>什么是字节码</h3><p>java源代码经过前端编译后形成的二进制文件，但是这是用于JVM执行的字节码指令，并非机器码。</p>
+<p>JVM在执行字节码时一开始性能会差一些预热之后通过JIT将热点代码缓存后性能会达到与C相同的性能。</p>
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念:"></a>概念:</h4><ul>
+<li><p>操作码(opcode)</p>
+<p>代表特定含义的操作码</p>
+</li>
+<li><p>操作数(operand)</p>
+<p>0个或多个</p>
+</li>
+<li><p>虚拟机指令</p>
+<p>虚拟机指令有一个字节长度的代表特定含义的操作码和随后的0个至多个代表操作所需参数的操作数。</p>
+</li>
+</ul>
+<h4 id="查看字节码文件方式："><a href="#查看字节码文件方式：" class="headerlink" title="查看字节码文件方式："></a>查看字节码文件方式：</h4><ul>
+<li><p>通过Javap</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -v className.class</span><br></pre></td></tr></table></figure></li>
+<li><p>通过Idea JClassLib 插件</p>
+</li>
+<li><p>通过Binary Viewer 等工具查看。</p>
+</li>
+</ul>
+<h4 id="参考资料-JAVA8虚拟机规范第四章："><a href="#参考资料-JAVA8虚拟机规范第四章：" class="headerlink" title="参考资料 JAVA8虚拟机规范第四章："></a>参考资料 JAVA8虚拟机规范第四章：</h4><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html">https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html</a></p>
+<h4 id="解读字节码"><a href="#解读字节码" class="headerlink" title="解读字节码"></a>解读字节码</h4><p>必要工具：</p>
+<p>Binary Viewer</p>
+<p>idea JClasslib:</p>
+<h5 id="字面量和符号引用"><a href="#字面量和符号引用" class="headerlink" title="字面量和符号引用:"></a>字面量和符号引用:</h5><table>
+<thead>
+<tr>
+<th>标致</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>F</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>I</td>
+<td>int</td>
+</tr>
+<tr>
+<td>J</td>
+<td>long</td>
+</tr>
+<tr>
+<td>S</td>
+<td>short</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>V</td>
+<td>void</td>
+</tr>
+<tr>
+<td>L</td>
+<td>LJava/lang/object;</td>
+</tr>
+<tr>
+<td>[</td>
+<td>数组类型，代表一维数组。比如:Str [] [] [] is [[[Ljava.lang.String;</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>在加载class文件实会建立动态链接库，将字常量池中的符号引用指向动态链接库 (Current Class Constant Pool Reference).</p>
+<p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/14/100818.png" alt="image-20220514100807446"></p>
+<p>建立动态链接库会在类的加载器子系统&gt; 连接阶段的&gt;解析阶段建立。</p>
+</blockquote>
+<h6 id="符号引用和直接引用的区别"><a href="#符号引用和直接引用的区别" class="headerlink" title="符号引用和直接引用的区别:"></a>符号引用和直接引用的区别:</h6><ul>
+<li><p>符号引用</p>
+<p>相当于引用的mata，有一组符号表示如何建立应用。在class文件中存在。</p>
+</li>
+<li><p>直接引用</p>
+<p>内存指针</p>
+</li>
+</ul>
+<h5 id="常量表类型"><a href="#常量表类型" class="headerlink" title="常量表类型"></a>常量表类型</h5><p><img src="https://raw.githubusercontent.com/akachi10/blog-pic/main/2022/05/14/104438.png" alt="image-20220514104434905"></p>
+<h2 id="字节码指令集与解析举例"><a href="#字节码指令集与解析举例" class="headerlink" title="字节码指令集与解析举例"></a>字节码指令集与解析举例</h2><h2 id="类的加载过程详解"><a href="#类的加载过程详解" class="headerlink" title="类的加载过程详解"></a>类的加载过程详解</h2><h2 id="再谈类的加载器"><a href="#再谈类的加载器" class="headerlink" title="再谈类的加载器"></a>再谈类的加载器</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="java-虚拟机规范"><a href="#java-虚拟机规范" class="headerlink" title="java 虚拟机规范"></a>java 虚拟机规范</h3><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/index.html">https://docs.oracle.com/javase/specs/index.html</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Akachi</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://artificial-deus.github.io/2015/08/01/java/JVM%20%E4%B8%AD%E7%AF%87/">https://artificial-deus.github.io/2015/08/01/java/JVM%20%E4%B8%AD%E7%AF%87/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java/">java</a><a class="post-meta__tags" href="/tags/jvm/">jvm</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2015/08/01/java/JVM%20%E8%B0%83%E4%BC%98/"><img class="prev-cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">JVM 调优</div></div></a></div><div class="next-post pull-right"><a href="/2015/08/01/java/Java%20%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E6%96%87%E7%9B%B2%E8%AF%BE%E7%A8%8B%E4%B8%8D%E5%80%BC%E5%BE%97%E7%9C%8B)/"><img class="next-cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Java 多线程(文盲课程不值得看)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2015/08/01/java/JVM%20%E8%B0%83%E4%BC%98/" title="JVM 调优"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2015-08-01</div><div class="title">JVM 调优</div></div></a></div><div><a href="/2015/08/01/java/JVM%20%E4%B8%8A%E7%AF%87/" title="JVM 上篇"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2015-08-01</div><div class="title">JVM 上篇</div></div></a></div><div><a href="/2020/08/01/java/Java%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" title="Java 并发编程"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-01</div><div class="title">Java 并发编程</div></div></a></div><div><a href="/2015/08/01/java/Java%20%E5%A4%9A%E7%BA%BF%E7%A8%8B(%E6%96%87%E7%9B%B2%E8%AF%BE%E7%A8%8B%E4%B8%8D%E5%80%BC%E5%BE%97%E7%9C%8B)/" title="Java 多线程(文盲课程不值得看)"><img class="cover" src="https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2015-08-01</div><div class="title">Java 多线程(文盲课程不值得看)</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JVM-%E4%B8%AD%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">JVM 中篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E6%96%87%E4%BB%B6%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%80%A7"><span class="toc-number">1.1.1.</span> <span class="toc-text">字节码文件的跨平台性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E7%9A%84%E5%89%8D%E7%AB%AF%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">1.1.2.</span> <span class="toc-text">java的前端编译器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E6%AE%B5%E7%BC%96%E8%AF%91%E5%99%A8%E5%92%8C%E5%90%8E%E7%AB%AF%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">前段编译器和后端编译器的关系</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%89%8D%E7%AB%AF%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">1.1.2.1.1.</span> <span class="toc-text">其他前端编译器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%8E%E7%AB%AF%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">1.1.2.1.2.</span> <span class="toc-text">后端编译器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E6%96%87%E4%BB%B6%E7%9C%8B%E4%B8%8D%E5%88%B0%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-number">1.1.3.</span> <span class="toc-text">java文件看不到的执行过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B1%EF%BC%9AInteger"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">例1：Integer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%972-String-%E7%9A%84hello-world%E6%8B%BC%E6%8E%A5"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">列2: String 的hello world拼接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%973-%E7%88%B6%E5%AD%90%E7%B1%BB"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">列3: 父子类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Class%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">Class文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CLass%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">CLass组成部分：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A%EF%BC%9A"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">解释：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">1.2.2.</span> <span class="toc-text">什么是字节码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">概念:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%AD%97%E8%8A%82%E7%A0%81%E6%96%87%E4%BB%B6%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">查看字节码文件方式：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-JAVA8%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%A7%84%E8%8C%83%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">参考资料 JAVA8虚拟机规范第四章：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E8%AF%BB%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">解读字节码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E9%9D%A2%E9%87%8F%E5%92%8C%E7%AC%A6%E5%8F%B7%E5%BC%95%E7%94%A8"><span class="toc-number">1.2.2.4.1.</span> <span class="toc-text">字面量和符号引用:</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%AC%A6%E5%8F%B7%E5%BC%95%E7%94%A8%E5%92%8C%E7%9B%B4%E6%8E%A5%E5%BC%95%E7%94%A8%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.2.4.1.1.</span> <span class="toc-text">符号引用和直接引用的区别:</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E8%A1%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.2.4.2.</span> <span class="toc-text">常量表类型</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E9%9B%86%E4%B8%8E%E8%A7%A3%E6%9E%90%E4%B8%BE%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">字节码指令集与解析举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.4.</span> <span class="toc-text">类的加载过程详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%8D%E8%B0%88%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">1.5.</span> <span class="toc-text">再谈类的加载器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.6.</span> <span class="toc-text">参考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%A7%84%E8%8C%83"><span class="toc-number">1.6.1.</span> <span class="toc-text">java 虚拟机规范</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('https://raw.githubusercontent.com/akachi10/blog-pic/main/4.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Akachi</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="algolia-search"><div class="search-dialog"><div class="search-dialog__title" id="algolia-search-title">Algolia</div><div id="algolia-input-panel"><div id="algolia-search-input"></div></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-stats"></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.5/dist/instantsearch.min.js"></script><script src="/js/search/algolia.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '413261098f0d1fc4c7fe',
+      clientSecret: '7b01f9f497ef8a14cf8d77449d4e348b9beb153a',
+      repo: 'artificial-deus.github.io',
+      owner: 'artificial-deus',
+      admin: ['akachi10'],
+      id: '8d2ce81f2a927fef873c908c9091011b',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
