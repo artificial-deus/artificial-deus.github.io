@@ -605,20 +605,6 @@
     <priority>0.6</priority>
   </url>
   
-  <url>
-    <loc>https://artificial-deus.github.io/tags/%E6%97%85%E6%B8%B8/</loc>
-    <lastmod>2022-12-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://artificial-deus.github.io/tags/%E6%8C%87%E5%8D%97/</loc>
-    <lastmod>2022-12-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
 
   
   <url>
@@ -784,13 +770,6 @@
   
   <url>
     <loc>https://artificial-deus.github.io/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</loc>
-    <lastmod>2022-12-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://artificial-deus.github.io/categories/%E6%97%85%E6%B8%B8/</loc>
     <lastmod>2022-12-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
